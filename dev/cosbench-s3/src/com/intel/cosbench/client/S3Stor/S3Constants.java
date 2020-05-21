@@ -39,5 +39,13 @@ public interface S3Constants {
     // CONTEXT NEEDS FROM AUTH MODULE
     // --------------------------------------------------------------------------
     String S3CLIENT_KEY = "s3client";
+    
+    // --------------------------------------------------------------------------
+    // OBJECT TAGS DEFINITION
+    // --------------------------------------------------------------------------
+    String OBJECT_TAGS_DEFN_KEY = "object_tags";
+    String LC_RULES_DEFN_KEY = "lc_rules";
+    String LC_RULES_COUNT_KEY = "lc_rules_count";
+    
 
 }
