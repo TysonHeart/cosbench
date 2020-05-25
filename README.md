@@ -7,6 +7,41 @@ Amazon S3 and Openstack* swift are well-known object storage solutions.
 
 COSBench now supports OpenStack* Swift, Amazon* S3, Amplidata v2.3, 2.5 and 3.1, Scality*, Ceph, CDMI, Google* Cloud Storage, Aliyun OSS as well as custom adaptors.
 
+** This fork of cosbench has the below enhancements over the original cosbench repo:
+  - Upgrades the httpclient library used in cosbench-s3 plugin to 4.5.12.
+  - Upgrades the aws s3 client (sdk) library used in cosbench-s3 plugin to 1.11.700.
+  - Adds support for adding lifecycle rules to buckets via cosbench provided specifiers.
+  - Adds support for adding object tags to objects (after writing them) via cosbench provided specifiers.
+** 
+
+Parameters for adding lifecycle rules and object tags 
+-----------------------------------------------------
+> <storage type="s3" config="accesskey=XXXXXXXXXXXXXXXXXXXX;secretkey=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;endpoint=http://<host:port>;path_style_access=true;lc_rules_count=c(10);lc_rules=userid|uservalueprefix|r(1,100):pci_status|pci|r(1,2)=u(1,3);object_tags=userid|uservalueprefix|u(1,100):pci_status|pci|u(1,2)"/>
+
+The parameters lc_rules_count and lc_rules are used during the application of lifecycle configuration to a bucket.
+
+- lc_rules_count: Number of rules in lifecycle configuration per bucket. Format: <some cosbench specifier>. Optional parameter, default value of this 'lc_rules_count' is 'c(1)'.
+- lc_rules: The definition of lifecycle rules. Format: <colon separated list of tag matchers>=<expiration days specifier>
+-- Here a tag matcher is of the format
+  > <tag key>|<tag value prefix>|<tag value suffix specifier>
+
+  A tag key is a static string whereas a tag value is composed of a static prefix followed by a specifier separated by a colon.
+
+- Expiration days specifier generates an expiration value in days.
+
+For each bucket, all specifiers in the parameter configuration are triggered for their next set of values and those are used in the lifecycle configuration.
+Lifecycle rules are re-applied even if bucket already exists and not just during creation of a bucket.
+
+The object tags are applied to an object immediately after the object is written to the object store.
+The 'object_tags' parameter is used to generate object tags to apply to each object.
+
+The value of the parameter 'object_tags' is a colon separated list of tags. A tag is a combination of tag key and tag value. A tag key is a static string whereas a tag value is composed of a static prefix followed by a specifier separated by a colon.
+- object_tags=<colon separated list of tag matchers>.
+-- Here a tag matcher is of the format
+  > <tag key>|<tag value prefix>|<tag value suffix specifier>
+
+For each object, all specifiers in the parameter configuration are triggered for their next set of values and those are used in object tags applied to an object.
+
 
 Important Notice and Contact Information
 ----------------------------------------
