@@ -259,7 +259,7 @@ public class S3Storage extends NoneStorage {
     		metadata.setContentLength(length);
     		metadata.setContentType("application/octet-stream");
     		
-        	client.putObject(container, object, data, metadata);
+    		PutObjectRequest por = new PutObjectRequest(container, object, data, metadata);
         	
         	// add object tags now if provided
         	if (objTagMetadataList != null) {
@@ -272,11 +272,13 @@ public class S3Storage extends NoneStorage {
 	        	}
 	        	
 	        	if (!tsList.isEmpty()) {
-	        		client.setObjectTagging(new SetObjectTaggingRequest(container, object, new ObjectTagging(tsList)));
+	        		por = por.withTagging(new ObjectTagging(tsList));
 	        	}
 	        	
 	        	logger.debug("Added tags to object:container:tags {}", new Object[] {object, container, tsList.size()});
         	}
+        	
+        	client.putObject(por);
         	
         } catch (Exception e) {
             throw new StorageException(e);
